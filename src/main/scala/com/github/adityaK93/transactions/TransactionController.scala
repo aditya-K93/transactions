@@ -34,7 +34,7 @@ final case class TransactionController[F[_]](
       sm <- e.delay(
         Sum(
           traverseChildren(id, transactions)
-            .foldRight(transactions.get(id).fold(0.0)(_.amount))(_.amount + _)
+            .foldRight(transactions.get(id).fold(transactions.get(id).map(_.amount).getOrElse(0.0))(_.amount))(_.amount + _)
         )
       )
     } yield sm

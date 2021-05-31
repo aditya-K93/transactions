@@ -1,0 +1,7 @@
+.tags
+.idea/
+.metals/
+.vscode/
+.bsp/
+project/
+target/

@@ -5,6 +5,7 @@ import cats.implicits._
 import cats.effect.IO
 import com.github.adityaK93.transactions.entities._
 
+import scala.annotation.tailrec
 import scala.collection.concurrent.TrieMap
 
 final case class TransactionController[F[_]](
@@ -33,27 +34,39 @@ final case class TransactionController[F[_]](
     for {
       sm <- e.delay(
         Sum(
-          traverseChildren(id, transactions)
-            .foldRight(
-              transactions
-                .get(id)
-                .fold(transactions.get(id).map(_.amount).getOrElse(0.0))(_.amount)
-            )(_.amount + _)
+          traverseChildrenRecursively(id, transactions, children) + transactions
+            .get(id)
+            .fold(transactions.get(id).map(_.amount).getOrElse(0.0))(_.amount)
         )
       )
     } yield sm
 
-  def traverseChildren(
+  def traverseChildrenRecursively(
       parent_id: Long,
-      m: TrieMap[Long, Transaction]
-  ): Iterable[Transaction] =
-    m.filter(x => x._2.parent_id.contains(parent_id)).flatMap {
-      _ match {
-        case (k, t1 @ Transaction(_, _, Some(_))) =>
-          traverseChildren(k, m) ++ List(t1)
-        case (_, t2 @ Transaction(_, _, None)) => List(t2)
+      tmap: TrieMap[Long, Transaction],
+      f: (Long, TrieMap[Long, Transaction]) => Iterable[(Long, Transaction)]
+  ): Double = {
+
+    @tailrec
+    def recurseAcc(
+        acc: Double,
+        children: Iterable[(Long, Transaction)]
+    ): Double =
+      children.toList match {
+
+        case Nil => acc
+        case (id, Transaction(_, bal, Some(_))) :: tail =>
+          recurseAcc(acc + bal, tail ++ f(id, tmap))
+        case (id, Transaction(_, bal, None)) :: tail => recurseAcc(acc + bal, tail ++ f(id, tmap))
       }
-    }
+
+    recurseAcc(0.0, f(parent_id, tmap))
+
+  }
+  def children(parent_id: Long, tmap: TrieMap[Long, Transaction]): Iterable[(Long, Transaction)] = {
+    val kk = tmap.filter(x => x._2.parent_id.contains(parent_id))
+    kk.keys.zip(kk.values)
+  }
 
 }
 object TransactionRepositoryMap {

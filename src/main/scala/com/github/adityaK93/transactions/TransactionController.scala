@@ -5,10 +5,10 @@ import cats.implicits._
 import cats.effect.IO
 import com.github.adityaK93.transactions.entities._
 
-import scala.collection.mutable
+import scala.collection.concurrent.TrieMap
 
 final case class TransactionController[F[_]](
-    private val transactions: mutable.HashMap[Long, Transaction]
+    private val transactions: TrieMap[Long, Transaction]
 )(implicit
     e: Effect[F]
 ) {
@@ -45,7 +45,7 @@ final case class TransactionController[F[_]](
 
   def traverseChildren(
       parent_id: Long,
-      m: mutable.HashMap[Long, Transaction]
+      m: TrieMap[Long, Transaction]
   ): Iterable[Transaction] =
     m.filter(x => x._2.parent_id.contains(parent_id)).flatMap {
       _ match {
@@ -58,6 +58,6 @@ final case class TransactionController[F[_]](
 }
 object TransactionRepositoryMap {
   def empty[F[_]](implicit m: Effect[F]): IO[TransactionController[F]] = IO {
-    new TransactionController[F](mutable.HashMap())
+    new TransactionController[F](TrieMap())
   }
 }

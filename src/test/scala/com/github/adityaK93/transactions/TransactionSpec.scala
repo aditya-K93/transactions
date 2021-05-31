@@ -9,7 +9,7 @@ import org.http4s.circe.jsonEncoder
 import org.http4s.implicits._
 import org.specs2.matcher.MatchResult
 
-import scala.collection.mutable
+import scala.collection.concurrent.TrieMap
 
 class TransactionSpec extends org.specs2.mutable.Specification {
 
@@ -29,7 +29,7 @@ class TransactionSpec extends org.specs2.mutable.Specification {
   val transaction: Transaction = Transaction("car", 5000.0, None)
   val id: Long                 = 10.toLong
   val TransactionCont: TransactionController[IO] =
-    TransactionController[IO](mutable.HashMap(id -> transaction))
+    TransactionController[IO](TrieMap(id -> transaction))
 
   def testService(): HttpService[IO] = TransactionService.service[IO](TransactionCont)
   val uri: Uri                       = Uri.fromString(f"/transactionservice/transaction/$id").right.get

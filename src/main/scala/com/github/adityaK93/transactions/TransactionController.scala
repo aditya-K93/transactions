@@ -55,9 +55,8 @@ final case class TransactionController[F[_]](
       children.toList match {
 
         case Nil => acc
-        case (id, Transaction(_, bal, Some(_))) :: tail =>
+        case (id, Transaction(_, bal, _)) :: tail =>
           recurseAcc(acc + bal, tail ++ f(id, tmap))
-        case (id, Transaction(_, bal, None)) :: tail => recurseAcc(acc + bal, tail ++ f(id, tmap))
       }
 
     recurseAcc(0.0, f(parent_id, tmap))

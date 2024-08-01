@@ -5,6 +5,7 @@
 - Test `sbt test`  
 - Run `sbt run`
 
+Transitive Sum
 ```parent(B) = A 
 parent(C) = A
 parent(D) = B

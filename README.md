@@ -5,6 +5,22 @@
 - Test `sbt test`  
 - Run `sbt run`
 
+```parent(B) = A 
+parent(C) = A
+parent(D) = B
+parent(B) = C
+sum(A)    => f(A) + sum(children) where f is amount at any given time
+          = f(A) + sum(B,C)
+          = f(A) + {f(B) + sum(D)} + {f(C)+sum(B)}
+```
+ sum(A)   = f(A) + f(B) + f(D) + f(C) + ~f(B)~ + ~f(D)~
+```
+sum(B)    = f(B) + sum(D)
+          = f(B) + f(D)
+sum(C)    = f(C) + sum(B)
+          = f(C) + f(B) + f(D)
+sum(D)    = f(D)
+```
 
 Example commands (GET, POST, PUT):
 

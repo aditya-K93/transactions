@@ -1,5 +1,5 @@
-val Http4sVersion  = "0.18.0"
-val Specs2Version  = "4.0.2"
+val Http4sVersion  = "0.21.34"
+val Specs2Version  = "4.15.0"
 val LogbackVersion = "1.2.3"
 val CirceVersion   = "0.12.3"
 
@@ -8,7 +8,7 @@ lazy val root = (project in file("."))
     organization := "com.github.aditya-K93",
     name := "transactions",
     version := "0.0.1-SNAPSHOT",
-    scalaVersion := "2.12.13",
+    scalaVersion := "2.13.12",
     libraryDependencies ++= Seq(
       "org.http4s"    %% "http4s-blaze-server" % Http4sVersion,
       "org.http4s"    %% "http4s-blaze-client" % Http4sVersion,
@@ -18,7 +18,6 @@ lazy val root = (project in file("."))
       "org.http4s"    %% "http4s-dsl"          % Http4sVersion,
       "org.specs2"    %% "specs2-core"         % Specs2Version % "test",
       "ch.qos.logback" % "logback-classic"     % LogbackVersion
-    ),
-    addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
-    addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
+    )
   )
+ThisBuild / scalacOptions := Seq("-unchecked", "-deprecation", "-Wunused")

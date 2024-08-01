@@ -2,7 +2,6 @@ package com.github.adityaK93.transactions
 
 import cats.effect._
 import cats.implicits._
-import cats.effect.IO
 import com.github.adityaK93.transactions.entities._
 
 import scala.annotation.tailrec

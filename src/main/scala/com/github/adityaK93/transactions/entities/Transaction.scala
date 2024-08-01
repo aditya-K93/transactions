@@ -1,6 +1,7 @@
 package com.github.adityaK93.transactions.entities
 
-import io.circe.Encoder, io.circe.Decoder
+import io.circe.Decoder
+import io.circe.Encoder
 
 case class Transaction(_type: String, amount: Double, parent_id: Option[Long])
 case class Sum(sum: Double)

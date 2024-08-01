@@ -14,7 +14,7 @@ import scala.collection.concurrent.TrieMap
 class TransactionSpec extends org.specs2.mutable.Specification {
 
   "Post Transaction" >> {
-    "return 200" >> postTrnsReturns200
+    "return 200" >> postTrnsReturns200()
   }
 
   "Get Transaction" >> {
@@ -31,15 +31,15 @@ class TransactionSpec extends org.specs2.mutable.Specification {
   val TransactionCont: TransactionController[IO] =
     TransactionController[IO](TrieMap(id -> transaction))
 
-  def testService(): HttpService[IO] = TransactionService.service[IO](TransactionCont)
-  val uri: Uri                       = Uri.fromString(f"/transactionservice/transaction/$id").right.get
+  def testService(): HttpRoutes[IO] = TransactionService.service[IO](TransactionCont)
+  val uri: Uri                      = Uri.fromString(f"/transactionservice/transaction/$id").fold(throw _, identity)
 
   private[this] val retPostTransaction: Response[IO] = {
 
     val postLstngs =
       Request[IO](Method.POST, uri)
-        .withBody(transaction.asJson)
-        .unsafeRunSync()
+        .withEntity(transaction.asJson)
+
     testService().orNotFound(postLstngs).unsafeRunSync()
   }
   private[this] def postTrnsReturns200(): MatchResult[Status] =

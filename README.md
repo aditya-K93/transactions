@@ -9,20 +9,20 @@
 Example commands (GET, POST, PUT):
 
 - `POST/PUT`
-curl -v -H "Content-Type: application/json" -X PUT http://localhost:8080/transactionservice/transaction/10 -d '{ "type":"cars","amount" : 5000}'
+curl  -H "Content-Type: application/json" -X PUT http://localhost:8080/transactionservice/transaction/10 -d '{ "type":"cars","amount" : 5000}'
 
 
 - `POST/PUT`
-curl -v -H "Content-Type: application/json" -X PUT http://localhost:8080/transactionservice/transaction/11 -d '{ "type":"shopping","amount" : 10000, "parent_id":10}'
+curl  -H "Content-Type: application/json" -X PUT http://localhost:8080/transactionservice/transaction/11 -d '{ "type":"shopping","amount" : 10000, "parent_id":10}'
 
 
 - `GET`
-curl -v http://localhost:8080/transactionservice/types/cars
+curl http://localhost:8080/transactionservice/types/cars
 
 
 - `GET`
-curl -v http://localhost:8080/transactionservice/sum/10
+curl  http://localhost:8080/transactionservice/sum/10
 
 
 - `GET`
-curl -v http://localhost:8080/transactionservice/sum/11  
+curl  http://localhost:8080/transactionservice/sum/11  

@@ -5,22 +5,23 @@
 - Test `sbt test`  
 - Run `sbt run`
 
-Transitive Sum
+Transitive Sum (recursive definition)
 ```parent(B) = A 
 parent(C) = A
 parent(D) = B
 parent(B) = C
-sum(A)    => f(A) + sum(children) where f is amount at any given time
-          = f(A) + sum(B,C)
-          = f(A) + {f(B) + sum(D)} + {f(C)+sum(B)}
-```
- sum(A)   = f(A) + f(B) + f(D) + f(C) + ~f(B)~ + ~f(D)~
-```
-sum(B)    = f(B) + sum(D)
-          = f(B) + f(D)
-sum(C)    = f(C) + sum(B)
-          = f(C) + f(B) + f(D)
-sum(D)    = f(D)
+for any given txn x: transitive_sum(x)   => f(x) + transitive_sum(children(x)) where f(x) is cost of txn x
+transitive_sum(A)    = f(A) + transitive_sum(C)
+transitive_sum(B)    = f(B) + transitive_sum(D)
+transitive_sum(C)    = f(C) + transitive_sum(B)
+transitive_sum(D)    = f(D)
+
+transitive_sum(B)    = f(B) + transitive_sum(D)
+                     = f(B) + f(D)
+transitive_sum(C)    = f(C) + transitive_sum(B)
+                     = f(C) + f(B) + f(D)
+transitive_sum(A)    = f(A) + transitive_sum(C)                    
+                     = f(A) + f(C) + f(B) + f(D)
 ```
 
 Example commands (GET, POST, PUT):

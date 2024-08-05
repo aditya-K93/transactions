@@ -14,7 +14,7 @@ import scala.collection.concurrent.TrieMap
 class TransactionSpec extends org.specs2.mutable.Specification {
 
   "Post Transaction" >> {
-    "return 200" >> postTrnsReturns200()
+    "return 201" >> postTrnsReturns201()
   }
 
   "Get Transaction" >> {
@@ -42,8 +42,8 @@ class TransactionSpec extends org.specs2.mutable.Specification {
 
     testService().orNotFound(postLstngs).unsafeRunSync()
   }
-  private[this] def postTrnsReturns200(): MatchResult[Status] =
-    retPostTransaction.status must beEqualTo(Status.Ok)
+  private[this] def postTrnsReturns201(): MatchResult[Status] =
+    retPostTransaction.status must beEqualTo(Status.Created)
 
   private[this] val retGetTran: Response[IO] = {
     val getLstngs = Request[IO](Method.GET, uri)

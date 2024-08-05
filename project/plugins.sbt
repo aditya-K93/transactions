@@ -1,3 +1,5 @@
-addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6")
-addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
-addSbtPlugin("ch.epfl.scala"        % "sbt-scalafix"       % "0.12.1")
+addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat"        % "0.1.20")
+addSbtPlugin("io.spray"                  % "sbt-revolver"        % "0.9.1")
+addSbtPlugin("com.typesafe.sbt"          % "sbt-native-packager" % "1.8.1")
+addSbtPlugin("org.scalameta"             % "sbt-scalafmt"        % "2.4.2")
+addSbtPlugin("ch.epfl.scala"             % "sbt-scalafix"        % "0.11.0")

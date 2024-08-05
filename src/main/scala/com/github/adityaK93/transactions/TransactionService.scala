@@ -7,15 +7,11 @@ import io.circe.syntax._
 import org.http4s._
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
-import org.http4s.implicits._
-import org.http4s.server.blaze.BlazeServerBuilder
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 import entities.Transaction
-import entities.ResponseOK
+import com.github.adityaK93.transactions.entities._
 
-object TransactionService extends IOApp with Http4sDsl[IO] {
+object TransactionService extends Http4sDsl[IO] {
 
   val TS = "transactionservice"
   val T  = "transaction"
@@ -33,7 +29,8 @@ object TransactionService extends IOApp with Http4sDsl[IO] {
           .flatMap {
             case Some(transaction) =>
               F.pure(Response(status = Status.Ok).withEntity(transaction.asJson.dropNullValues))
-            case None => F.pure(Response(status = Status.NotFound))
+            case None =>
+              F.pure(Response(status = Status.NotFound).withEntity(_Response("Bad Request").asJson))
           }
 
       case GET -> Root / TS / T =>
@@ -51,8 +48,17 @@ object TransactionService extends IOApp with Http4sDsl[IO] {
           .flatMap(
             transactionRepo
               .addTransactionWithId(_, transactionId)
-              .flatMap(_ =>
-                F.pure(Response(status = Status.Ok).withEntity(ResponseOK("ok").asJson))
+              .flatMap(t =>
+                t.fold(
+                  F.pure(
+                    Response[F](status = Status.BadRequest)
+                      .withEntity(_Response("Bad Request").asJson)
+                  )
+                )(_ =>
+                  F.pure(
+                    Response[F](status = Status.Created).withEntity(_Response("Created").asJson)
+                  )
+                )
               )
           )
 
@@ -61,9 +67,18 @@ object TransactionService extends IOApp with Http4sDsl[IO] {
           .decodeJson[Transaction]
           .flatMap(
             transactionRepo
-              .addTransactionWithId(_, transactionId)
-              .flatMap(_ =>
-                F.pure(Response(status = Status.Ok).withEntity(ResponseOK("ok").asJson))
+              .updateTransactionWithId(_, transactionId)
+              .flatMap(t =>
+                t.fold(
+                  F.pure(
+                    Response[F](status = Status.BadRequest)
+                      .withEntity(_Response("Bad Request").asJson)
+                  )
+                )(_ =>
+                  F.pure(
+                    Response[F](status = Status.Accepted).withEntity(_Response("Accepted").asJson)
+                  )
+                )
               )
           )
 
@@ -72,18 +87,4 @@ object TransactionService extends IOApp with Http4sDsl[IO] {
           .getTransactionSum(transactionId)
           .flatMap(s => F.pure(Response(status = Status.Ok).withEntity(s.asJson)))
     }
-
-  def run(
-      args: List[String]
-  ): IO[ExitCode] =
-    TransactionRepositoryMap.empty[IO].flatMap { transactionRepo =>
-      BlazeServerBuilder[IO](global)
-        .bindHttp(8080, "0.0.0.0")
-        .withHttpApp(service(transactionRepo).orNotFound)
-        .serve
-        .compile
-        .drain
-        .as(ExitCode.Success)
-    }
-
 }

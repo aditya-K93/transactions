@@ -24,10 +24,29 @@ final case class TransactionController[F[_]](
       res <- e.delay(transactions.filter(x => x._2._type == ttype))
     } yield res.keys.toList
 
-  def addTransactionWithId(transaction: Transaction, id: Long): F[Long] =
+  def addTransactionWithId(
+      transaction: Transaction,
+      id: Long
+  ): F[Option[TrieMap[Long, Transaction]]] =
     for {
-      _ <- e.delay(transactions += (id -> transaction))
-    } yield id
+      t <- e.delay(
+        validateTransaction(transactions, id, transaction).map(_ =>
+          transactions.addOne(id -> transaction)
+        )
+      )
+    } yield t
+
+  def updateTransactionWithId(
+      transaction: Transaction,
+      id: Long
+  ): F[Option[TrieMap[Long, Transaction]]] =
+    for {
+      t <- e.delay(
+        validateTransaction(transactions, id, transaction).map(_ =>
+          transactions.addOne(id -> transaction)
+        )
+      )
+    } yield t
 
   def getTransactionSum(id: Long): F[Sum] =
     for {
@@ -64,6 +83,36 @@ final case class TransactionController[F[_]](
   def children(parent_id: Long, tmap: TrieMap[Long, Transaction]): Iterable[(Long, Transaction)] = {
     val kk = tmap.filter(x => x._2.parent_id.contains(parent_id))
     kk.keys.zip(kk.values)
+  }
+  def validateTransaction(
+      trieMap: TrieMap[Long, Transaction],
+      id: Long,
+      transaction: Transaction
+  ): Option[Transaction] = {
+
+    @tailrec
+    def detectCycle(currentId: Long, visited: Set[Long]): Boolean =
+      if (visited.contains(currentId)) true
+      else {
+        trieMap.get(currentId) match {
+          case Some(Transaction(_, _, Some(parentId))) =>
+            detectCycle(parentId, visited + currentId)
+          case _ => false
+        }
+      }
+
+    // Check if the new transaction would create a cycle
+    val wouldCreateCycle = transaction.parent_id match {
+      case Some(parentId) => detectCycle(parentId, Set(id))
+      case None           => false
+    }
+
+    if (wouldCreateCycle) {
+      None
+    } else {
+      trieMap.put(id, transaction)
+      Some(transaction)
+    }
   }
 
 }

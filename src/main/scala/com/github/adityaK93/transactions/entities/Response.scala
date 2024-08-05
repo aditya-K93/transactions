@@ -1,3 +1,3 @@
 package com.github.adityaK93.transactions.entities
 
-case class ResponseOK(status: String)
+case class _Response(Message: String)

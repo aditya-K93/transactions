@@ -5,10 +5,9 @@ val CirceVersion   = "0.12.3"
 
 lazy val root = (project in file("."))
   .settings(
-    organization := "com.github.aditya-K93",
+    organization := "com.github.adityaK93",
     name := "transactions",
     version := "0.0.1-SNAPSHOT",
-    scalaVersion := "2.13.12",
     libraryDependencies ++= Seq(
       "org.http4s"    %% "http4s-blaze-server" % Http4sVersion,
       "org.http4s"    %% "http4s-blaze-client" % Http4sVersion,
@@ -20,4 +19,6 @@ lazy val root = (project in file("."))
       "ch.qos.logback" % "logback-classic"     % LogbackVersion
     )
   )
+
+ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / scalacOptions := Seq("-unchecked", "-deprecation", "-Wunused")

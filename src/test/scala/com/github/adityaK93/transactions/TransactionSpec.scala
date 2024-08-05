@@ -2,8 +2,8 @@ package com.github.adityaK93.transactions
 
 import cats.effect.IO
 import com.github.adityaK93.transactions.entities._
-import io.circe.syntax.EncoderOps
 import io.circe.Json
+import io.circe.syntax.EncoderOps
 import org.http4s._
 import org.http4s.circe.jsonEncoder
 import org.http4s.implicits._
